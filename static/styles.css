@@ -23,12 +23,17 @@ body {
     background: #1a2332;
     margin: 5px;
     border-radius: 25px;
-    overflow: hidden; 
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 50px);
+    max-height: calc(100vh - 50px);
 }
 
 #chatcontainer {
+    flex: 1;
     display: flex;
-    height: 100%;
+    overflow: hidden;
 }
 
 #chattingsection {
@@ -116,7 +121,7 @@ li {
     border: none;
     border-radius: 10px;
     padding: 10px;
-    font-size: 14px;
+    font-size: 20px;
     background: #1a2332;
     color: #cbd5e1;
     outline: none;
@@ -203,10 +208,16 @@ li {
     margin: 0px 0px 0px 10px;
 }
 
-#chatitems {
+#chatitems, #statusitems {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    flex: 1;
+    overflow-y: auto;
+    max-height: calc(100vh - 230px);
+    padding-right: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: #1e3a5f #112240;
 }
 
 .chatitem {
@@ -214,17 +225,16 @@ li {
     padding: 10px;
     border-radius: 15px;
     word-wrap: break-word;
-    font-size: 14px;
+    font-size: 20px;
+    text-align: left;
 }
 
 .chatitemuser {
-    background: #255a9b; /* Lighter blue */
+    background: #255a9b;
     align-self: flex-end;
-    text-align: right;
 }
 
 .chatitemsystem {
-    background: #1e3a5f; /* Darker blue */
+    background: #1e3a5f;
     align-self: flex-start;
-    text-align: left;
 }
