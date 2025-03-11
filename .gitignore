@@ -1,0 +1,18 @@
+#My App Ignores
+logs/
+CHATDB.json
+.env
+
+#VS Code Ignores
+.vscode/*
+
+.history/
+
+*.vsix
+
+
+#NodeJS Ignores
+node_modules/
+
+package*.json
+

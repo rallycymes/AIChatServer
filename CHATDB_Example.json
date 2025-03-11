@@ -1,0 +1,25 @@
+{
+	"chats": [
+		{
+			"my_id": 0,
+			"datetime_initiated": "2025-03-09T23:16:12.409Z",
+			"friendly_title": "New Chat 1",
+			"messages": [],
+			"raw_responses": []
+		},
+		{
+			"my_id": 1,
+			"datetime_initiated": "2025-03-09T23:16:13.362Z",
+			"friendly_title": "New Chat 2",
+			"messages": [],
+			"raw_responses": []
+		},
+		{
+			"my_id": 2,
+			"datetime_initiated": "2025-03-09T23:17:05.931Z",
+			"friendly_title": "New Chat 3",
+			"messages": [],
+			"raw_responses": []
+		}
+	]
+}
