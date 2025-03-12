@@ -2,6 +2,7 @@
 logs/
 CHATDB.json
 .env
+*.zip
 
 #VS Code Ignores
 .vscode/*
