@@ -48,6 +48,8 @@ async function sendChatMessage() {
         schedule: scheduleBtn.classList.contains("highlighted"),
         isaliassystem: aliasBtn.classList.contains("highlighted")
     }
+    //As soon as request body is prepared, clear the chat input. We don't want it waiting on a reply.
+    chatinput.value = '';
 
     const response = await fetch(`/chat/send`, {
         method: 'POST',
@@ -190,11 +192,43 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     //Register send message request
     sendBtn.addEventListener("click", async function() {
+        let loadingElement;
         try {
+            const messageText = chatinput.value.trim();
+            if (!messageText) return;
+
+            //Disable send button first, use this as mutex
+            sendBtn.disabled = true;
+    
+            // Optimistically add user's message
+            const userMsgElement = document.createElement('div');
+            userMsgElement.classList.add("chatitem", "chatitemuser");
+            userMsgElement.innerHTML = `<strong>user:</strong> ${messageText}`;
+            chatitems.appendChild(userMsgElement);
+    
+            // Add loading animation for system response
+            loadingElement = document.createElement('div');
+            loadingElement.classList.add("chatitem", "chatitemsystem", "loading");
+            loadingElement.innerHTML = `
+                <div class="loading-dots">
+                    <span>.</span><span>.</span><span>.</span>
+                </div>
+            `;
+            chatitems.appendChild(loadingElement);
+            
+            //Send chat message
             const chatData = await sendChatMessage();
-            renderMainChat(chatData);
+            
+            // Response received, render all chat items
+            renderMainChat(chatData);    
+            
+            //Re-enable send button, release mutex
+            sendBtn.disabled = false;
+    
         } catch (error) {
             console.error("Error sending chat request:", error);
+            if (loadingElement) loadingElement.remove();
+            sendBtn.disabled = false;
         }
     });
 
