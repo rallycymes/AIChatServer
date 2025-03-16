@@ -24,17 +24,17 @@ function CONTROLLERS (dbfilepath) {
         return CHATS.createNewChat();
     }
 
-    this.sendChatMessage = function(messageparams) {
+    this.sendChatMessage = async function(messageparams) {
 
         if(messageparams.ispreparemode) {//Update the model with the prepared message and return updated chat
             return CHATS.addPreparedMessage(messageparams);
         }
         else {//Send chat with newest message to AI service. Update the model with the response and return updated chat
             if(messageparams.retry || messageparams.schedule) {//Message needs to be handled by a scheduler for timing purposes
-                return CHATS.sendTimedRetryMessage(messageparams);
+                return await CHATS.sendTimedRetryMessage(messageparams);
             }
             else {//Single-try, immediate message send. Can be handled directly by the model. 
-                return CHATS.sendMessage(messageparams);
+                return await CHATS.sendMessage(messageparams);
             }
         }
     }

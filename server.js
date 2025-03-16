@@ -64,8 +64,9 @@ app.get('/chat/new', (req, res) => {
 
 //Send chat message
 app.post('/chat/send', (req, res) => {
-    const chatData = controllers.sendChatMessage(req.body);
-    res.send(chatData);
+    controllers.sendChatMessage(req.body).then( chatData => {
+        res.send(chatData);
+    });
 });
 
 

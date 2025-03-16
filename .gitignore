@@ -3,6 +3,7 @@ logs/
 CHATDB.json
 .env
 *.zip
+Spoof.json
 
 #VS Code Ignores
 .vscode/*

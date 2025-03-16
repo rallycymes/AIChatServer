@@ -18,6 +18,43 @@ function MODEL (chatdbfilepath) {
         }
     }
 
+    function prepareSend(chat) {
+
+    }
+
+    async function SendToAI(sendbody) {
+        //Spoof response for now
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const spoofresponse = fs.readFileSync("Spoof.json", 'utf8');
+                resolve(JSON.parse(spoofresponse));
+            }, 3000);
+        });
+    }
+
+    function getChatItemIndex(chat, isparallel = false) {
+        if(chat.messages.length == 0)
+            return 0;
+        if(chat.messages.length == 1)
+            return isparallel ? 1 : 0;
+
+        let new_chat_item_display_index = chat.messages.reduce(function(prev, current) {
+            return (prev && prev.display_index > current.display_index) ? prev : current
+        }).display_index;
+        return isparallel ? new_chat_item_display_index : new_chat_item_display_index + 1;
+    }
+
+    function buildNewBubble(display_index, status, user, text) {
+        return {
+            display_index: display_index,
+            status: status,
+            user: user,
+            text: text,
+        };
+    }
+
+    
+
     //To enable graceful save and exit
     this.getFinalDB = function() {
         return JSON.stringify(DB, null, "\t");
@@ -64,10 +101,14 @@ function MODEL (chatdbfilepath) {
 
     this.addPreparedMessage = function(messageparams) {
         let chat = this.getChat(messageparams.my_id);
-        chat.messages.push({
-            user: messageparams.isaliassystem ? "system" : "user",
-            text: messageparams.message
-        })
+        let newdisplayindex = getChatItemIndex(chat);
+        let preparedbubble = buildNewBubble(
+            newdisplayindex,
+            "unsent",
+            messageparams.isaliassystem ? "system" : "user",
+            messageparams.message
+        );
+        chat.messages.push(preparedbubble)
         return chat;
     }
 
@@ -76,8 +117,37 @@ function MODEL (chatdbfilepath) {
         return chat;
     }
 
-    this.sendMessage = function(messageparams) {
+    this.sendMessage = async function(messageparams) {
+        //Get and add user bubble to chat model
         let chat = this.getChat(messageparams.my_id);
+        let newdisplayindex = getChatItemIndex(chat);
+        let sendingbubble = buildNewBubble(
+            newdisplayindex,
+            "sending",
+            "user",
+            messageparams.message
+        );
+        chat.messages.push(sendingbubble);
+
+        //Send out API call for reply
+        let sendbody = prepareSend(chat);
+        let AIJSONResponse = await SendToAI(sendbody);
+
+        //Add AI response bubble to chat model
+        chat.raw_responses.push({
+            associated_display_index: newdisplayindex,
+            response: AIJSONResponse
+        });
+        sendingbubble.status = "sent";
+        let AIText = AIJSONResponse.choices[AIJSONResponse.choices.length-1].message.content;
+        let replybubble = buildNewBubble(
+            newdisplayindex + 1,
+            "valid reply",
+            "system",
+            AIText
+        );
+        chat.messages.push(replybubble);
+
         return chat;
     }
 }
